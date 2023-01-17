@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from lib.visualize_mobile_robot import sim_mobile_robot
+from library.visualize_mobile_robot import sim_mobile_robot
 
 # Constants and Settings
 Ts = 0.01 # Update simulation every 10ms
