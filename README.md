@@ -16,6 +16,10 @@ To run the code simply execute the following script:
 The remaining code in the folder ```library``` contains the implementation for visuzalizing the robot icon (```library/visualize_mobile_robot.py```) and detecting obstacle (```library/detect_obstacle.py```)
 
 
+**WARNING!**
+The simulation code does not work with Spyder. It is highly suggested to run the code via Visual Studio or just via command line.
+
+
 ## Courses (Tampere University)
 The previous version of this code was used for exercises in the following courses:
 - AUT.710-2021-2022-1 Fundamentals of Mobile Robots (2nd part - later half)
