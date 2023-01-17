@@ -9,11 +9,11 @@ The model of the mobile robots rely on kinematic model of both omnidirectional r
 Dependency: Numpy and Matplotlib
 
 To run the code simply execute the following script:
-1. base_code_omnidirectional.py : simulation code for omnidirectional robot
-2. base_code_unicycle.py : simulation code for unicycle robot
-3. base_code_unicycle_rangesensor.py : same as 2 but with range sensor to test for obstacle avoidance
+1. ```base_code_omnidirectional.py``` : simulation code for omnidirectional robot
+2. ```base_code_unicycle.py``` : simulation code for unicycle robot
+3. ```base_code_unicycle_rangesensor.py``` : same as 2 but with range sensor to test for obstacle avoidance
 
-The remaining code in the folder lib contains the implementation for visuzalizing the robot icon (lib/visualize_mobile_robot.py) and detecting obstacle (lib/detect_obstacle.py)
+The remaining code in the folder ```library``` contains the implementation for visuzalizing the robot icon (```library/visualize_mobile_robot.py```) and detecting obstacle (```library/detect_obstacle.py```)
 
 
 ## Courses (Tampere University)
