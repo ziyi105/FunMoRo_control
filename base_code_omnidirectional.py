@@ -18,13 +18,16 @@ field_y = (-2, 2)
 def compute_control_input(desired_state, robot_state, current_time):
     # Feel free to adjust the input and output of the function as needed.
     # And make sure it is reflected inside the loop in simulate_control()
-
+    
     # initial numpy array for [vx, vy, omega]
     current_input = np.array([0., 0., 0.]) 
+
     # Compute the control input
-    current_input[0] = -2*np.sin(2*current_time)
-    current_input[1] = 2*np.cos(2*current_time)
-    current_input[2] = 2.
+    k = 1
+    error = desired_state[:2] - robot_state[:2]
+    current_input[0] = k * error[0]
+    current_input[1] = k * error[1]
+    current_input[2] = 2. # Constant angular velocity
 
     return current_input
 
