@@ -88,7 +88,7 @@ def simulate_control(k):
 if __name__ == '__main__':
     
     # Call main computation for robot simulation
-    k = 1
+    k = 3
     state_history, goal_history, input_history = simulate_control(k)
 
 
@@ -122,16 +122,10 @@ if __name__ == '__main__':
     # Plot time series of vx and px
     fig4 = plt.figure(4)
     plt.plot(t, input_history[:,0], label='vx [m/s]')
-    plt.xlabel("t [s]")
-    plt.ylabel("vx [m/s]")
-    plt.title(f"k = {k}")
-    plt.legend()
-    plt.grid()
-
     plt.plot(t, state_history[:,0], label='px [m]')
     plt.xlabel("t [s]")
-    plt.ylabel("px [m]")
-    plt.title(f"k = {k}")
+    plt.ylabel("vx [m/s], px [m]")
+    plt.title(f"vx, px vs. t for k = {k}")
     plt.legend()
     plt.grid()
 
