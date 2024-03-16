@@ -6,27 +6,35 @@ from library.visualize_mobile_robot import sim_mobile_robot
 Ts = 0.01 # Update simulation every 10ms
 t_max = np.pi # total simulation duration in seconds
 # Set initial state
-init_state = np.array([0., 0., 0.]) # px, py, theta
+init_state = np.array([0., 1.5, 0.]) # px, py, theta
 IS_SHOWING_2DVISUALIZATION = True
 
-# Define Field size for plotting (should be in tuple)
+# Define Field size for plotting (should be in tuple) 
 field_x = (-2.5, 2.5)
 field_y = (-2, 2)
 
 # IMPLEMENTATION FOR THE CONTROLLER
 #---------------------------------------------------------------------
+def xd(t):
+    return np.array([-2 * np.cos(t), np.sin(t), 0])
+
+def xd_dot(t):
+    return np.array([2 * np.sin(t), np.cos(t), 0])
+
 def compute_control_input(desired_state, robot_state, current_time, k):
     # Feel free to adjust the input and output of the function as needed.
     # And make sure it is reflected inside the loop in simulate_control()
 
     # initial numpy array for [vx, vy, omega]
     current_input = np.array([0., 0., 0.]) 
-
+    
     # Compute the control input
     error = desired_state[:2] - robot_state[:2]
-    current_input[0] = k * error[0]
-    current_input[1] = k * error[1]
-    current_input[2] = 2. # Constant angular velocity
+    desired_state_dot = xd_dot(current_time)
+
+    current_input[0] = k * error[0] + desired_state_dot[0]
+    current_input[1] = k * error[1] + desired_state_dot[1]
+    current_input[2] = 0
 
     return current_input
 
@@ -77,7 +85,7 @@ def simulate_control(k):
         robot_state[2] = ( (robot_state[2] + np.pi) % (2*np.pi) ) - np.pi # ensure theta within [-pi pi]
 
         # Update desired state if we consider moving goal position
-        #desired_state = desired_state + Ts*(-1)*np.ones(len(robot_state))
+        desired_state = desired_state + Ts*(-1)*np.ones(len(robot_state))
 
     # End of iterations
     # ---------------------------
@@ -119,14 +127,35 @@ if __name__ == '__main__':
     plt.legend()
     plt.grid()
 
-    # Plot time series of vx and px
+    # Plot time series of control input u
     fig4 = plt.figure(4)
-    plt.plot(t, input_history[:,0], label='vx [m/s]')
-    plt.plot(t, state_history[:,0], label='px [m]')
-    plt.xlabel("t [s]")
-    plt.ylabel("vx [m/s], px [m]")
-    plt.title(f"vx, px vs. t for k = {k}")
+    plt.plot(t, state_history[:, 0], label='u_x')
+    plt.plot(t, state_history[:, 1], label='u_y')
+    plt.plot(t, state_history[:, 2], label='u_theta')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Control Input')
+    plt.title('Time series of Control Input u')
     plt.legend()
-    plt.grid()
+
+    # Plot time series of error x_d - x
+    fig5 = plt.figure(5)
+    plt.plot(t, goal_history[:, 0] - input_history[:, 0], label='error_x')
+    plt.plot(t, goal_history[:, 1] - input_history[:, 1], label='error_y')
+    plt.plot(t, goal_history[:, 2] - input_history[:, 2], label='error_theta')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Error')
+    plt.title('Time series of Error x_d - x')
+    plt.legend()
+
+    # Plot state trajectory compared to the desired trajectory
+    fig6 = plt.figure(6)
+    plt.plot(state_history[:, 0], state_history
+             [:, 1], label='Robot Trajectory')
+    plt.plot([xd(t)[0] for t in np.arange(0, t_max, Ts)], [xd(t)[1] for t in np.arange(0, t_max, Ts)], label='Desired Trajectory')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.title('State Trajectory compared to Desired Trajectory')
+    plt.legend()
+    plt.grid(True)
 
     plt.show()
