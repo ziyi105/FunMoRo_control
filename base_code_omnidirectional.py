@@ -15,7 +15,7 @@ field_y = (-2, 2)
 
 # IMPLEMENTATION FOR THE CONTROLLER
 #---------------------------------------------------------------------
-def compute_control_input(desired_state, robot_state, current_time, k):
+def compute_control_input(desired_state, robot_state, current_time, v0, beta):
     # Feel free to adjust the input and output of the function as needed.
     # And make sure it is reflected inside the loop in simulate_control()
 
@@ -23,6 +23,12 @@ def compute_control_input(desired_state, robot_state, current_time, k):
     current_input = np.array([0., 0., 0.]) 
 
     # Compute the control input
+    error = desired_state[:2] - robot_state[:2]
+    error_norm = np.linalg.norm(error)
+    if error_norm == 0:
+        return current_input
+    k = v0 * (1 - np.exp(-beta * error_norm)) / error_norm
+
     error = desired_state[:2] - robot_state[:2]
     current_input[0] = k * error[0]
     current_input[1] = k * error[1]
@@ -33,7 +39,7 @@ def compute_control_input(desired_state, robot_state, current_time, k):
 
 # MAIN SIMULATION COMPUTATION
 #---------------------------------------------------------------------
-def simulate_control(k):
+def simulate_control(v0, beta):
     sim_iter = round(t_max/Ts) # Total Step for simulation
 
     # Initialize robot's state (Single Integrator)
@@ -59,7 +65,7 @@ def simulate_control(k):
 
         # COMPUTE CONTROL INPUT
         #------------------------------------------------------------
-        current_input = compute_control_input(desired_state, robot_state, current_time, k)
+        current_input = compute_control_input(desired_state, robot_state, current_time, v0, beta)
         #------------------------------------------------------------
 
         # record the computed input at time-step t
@@ -88,8 +94,9 @@ def simulate_control(k):
 if __name__ == '__main__':
     
     # Call main computation for robot simulation
-    k = 3
-    state_history, goal_history, input_history = simulate_control(k)
+    v0 = 3
+    beta = 2
+    state_history, goal_history, input_history = simulate_control(v0, beta)
 
 
     # ADDITIONAL PLOTTING
@@ -125,7 +132,7 @@ if __name__ == '__main__':
     plt.plot(t, state_history[:,0], label='px [m]')
     plt.xlabel("t [s]")
     plt.ylabel("vx [m/s], px [m]")
-    plt.title(f"vx, px vs. t for k = {k}")
+    plt.title(f"vx, px vs. t for v0, beta = {v0}, {beta}")
     plt.legend()
     plt.grid()
 
