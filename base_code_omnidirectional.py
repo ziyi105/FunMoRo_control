@@ -15,15 +15,14 @@ field_y = (-2, 2)
 
 # IMPLEMENTATION FOR THE CONTROLLER
 #---------------------------------------------------------------------
-def compute_control_input(desired_state, robot_state, current_time):
+def compute_control_input(desired_state, robot_state, current_time, k):
     # Feel free to adjust the input and output of the function as needed.
     # And make sure it is reflected inside the loop in simulate_control()
-    
+
     # initial numpy array for [vx, vy, omega]
     current_input = np.array([0., 0., 0.]) 
 
     # Compute the control input
-    k = 1
     error = desired_state[:2] - robot_state[:2]
     current_input[0] = k * error[0]
     current_input[1] = k * error[1]
@@ -34,7 +33,7 @@ def compute_control_input(desired_state, robot_state, current_time):
 
 # MAIN SIMULATION COMPUTATION
 #---------------------------------------------------------------------
-def simulate_control():
+def simulate_control(k):
     sim_iter = round(t_max/Ts) # Total Step for simulation
 
     # Initialize robot's state (Single Integrator)
@@ -60,7 +59,7 @@ def simulate_control():
 
         # COMPUTE CONTROL INPUT
         #------------------------------------------------------------
-        current_input = compute_control_input(desired_state, robot_state, current_time)
+        current_input = compute_control_input(desired_state, robot_state, current_time, k)
         #------------------------------------------------------------
 
         # record the computed input at time-step t
@@ -89,7 +88,8 @@ def simulate_control():
 if __name__ == '__main__':
     
     # Call main computation for robot simulation
-    state_history, goal_history, input_history = simulate_control()
+    k = 1
+    state_history, goal_history, input_history = simulate_control(k)
 
 
     # ADDITIONAL PLOTTING
@@ -116,6 +116,22 @@ if __name__ == '__main__':
     ax.plot(t, goal_history[:,1], ':', label='goal py [m]')
     ax.plot(t, goal_history[:,2], ':', label='goal theta [rad]')
     ax.set(xlabel="t [s]", ylabel="state")
+    plt.legend()
+    plt.grid()
+
+    # Plot time series of vx and px
+    fig4 = plt.figure(4)
+    plt.plot(t, input_history[:,0], label='vx [m/s]')
+    plt.xlabel("t [s]")
+    plt.ylabel("vx [m/s]")
+    plt.title(f"k = {k}")
+    plt.legend()
+    plt.grid()
+
+    plt.plot(t, state_history[:,0], label='px [m]')
+    plt.xlabel("t [s]")
+    plt.ylabel("px [m]")
+    plt.title(f"k = {k}")
     plt.legend()
     plt.grid()
 
