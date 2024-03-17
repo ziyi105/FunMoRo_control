@@ -6,7 +6,7 @@ from library.visualize_mobile_robot import sim_mobile_robot
 Ts = 0.01 # Update simulation every 10ms
 t_max = np.pi # total simulation duration in seconds
 # Set initial state
-init_state = np.array([0., 0., 0.]) # px, py, theta
+init_state = np.array([-1, 0., 0.]) # px, py, theta
 IS_SHOWING_2DVISUALIZATION = True
 
 # Define Field size for plotting (should be in tuple)
