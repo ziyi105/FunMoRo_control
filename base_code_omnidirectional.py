@@ -1,13 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 from library.visualize_mobile_robot import sim_mobile_robot
 
 # Constants and Settings
 Ts = 0.01 # Update simulation every 10ms
-t_max = np.pi # total simulation duration in seconds
+t_max = np.pi * 2 # total simulation duration in seconds
 # Set initial state
 init_state = np.array([0., 1.5, 0.]) # px, py, theta
 IS_SHOWING_2DVISUALIZATION = True
+k = 3
 
 # Define Field size for plotting (should be in tuple) 
 field_x = (-2.5, 2.5)
@@ -21,32 +23,30 @@ def xd(t):
 def xd_dot(t):
     return np.array([2 * np.sin(t), np.cos(t), 0])
 
-def compute_control_input(desired_state, robot_state, current_time, k):
+def compute_control_input(desired_state, robot_state, current_time):
     # Feel free to adjust the input and output of the function as needed.
     # And make sure it is reflected inside the loop in simulate_control()
 
     # initial numpy array for [vx, vy, omega]
-    current_input = np.array([0., 0., 0.]) 
+    control_input = np.array([0., 0., 0.]) 
     
     # Compute the control input
-    error = desired_state[:2] - robot_state[:2]
+    error = desired_state - robot_state
     desired_state_dot = xd_dot(current_time)
 
-    current_input[0] = k * error[0] + desired_state_dot[0]
-    current_input[1] = k * error[1] + desired_state_dot[1]
-    current_input[2] = 0
+    control_input = k * error + desired_state_dot
 
-    return current_input
+    return control_input
 
 
 # MAIN SIMULATION COMPUTATION
 #---------------------------------------------------------------------
-def simulate_control(k):
+def simulate_control():
     sim_iter = round(t_max/Ts) # Total Step for simulation
 
     # Initialize robot's state (Single Integrator)
     robot_state = init_state.copy() # numpy array for [px, py, theta]
-    desired_state = np.array([1., 1., 1.]) # numpy array for goal / the desired [px, py, theta]
+    desired_state = np.array([-2., 0., 0.]) # numpy array for goal / the desired [px, py, theta]
 
     # Store the value that needed for plotting: total step number x data length
     state_history = np.zeros( (sim_iter, len(robot_state)) ) 
@@ -67,7 +67,7 @@ def simulate_control(k):
 
         # COMPUTE CONTROL INPUT
         #------------------------------------------------------------
-        current_input = compute_control_input(desired_state, robot_state, current_time, k)
+        current_input = compute_control_input(desired_state, robot_state, current_time)
         #------------------------------------------------------------
 
         # record the computed input at time-step t
@@ -81,11 +81,14 @@ def simulate_control(k):
         #--------------------------------------------------------------------------------
         # Update new state of the robot at time-step t+1
         # using discrete-time model of single integrator dynamics for omnidirectional robot
-        robot_state = robot_state + Ts*current_input # will be used in the next iteration
+        robot_velocity = current_input
+        robot_state[0] += Ts * robot_velocity[0]  # Update x position
+        robot_state[1] += Ts * robot_velocity[1]  # Update y position
+        robot_state[2] += Ts * robot_velocity[2]  # Update orientation
         robot_state[2] = ( (robot_state[2] + np.pi) % (2*np.pi) ) - np.pi # ensure theta within [-pi pi]
 
         # Update desired state if we consider moving goal position
-        desired_state = desired_state + Ts*(-1)*np.ones(len(robot_state))
+        desired_state = xd(current_time)
 
     # End of iterations
     # ---------------------------
@@ -96,8 +99,7 @@ def simulate_control(k):
 if __name__ == '__main__':
     
     # Call main computation for robot simulation
-    k = 3
-    state_history, goal_history, input_history = simulate_control(k)
+    state_history, goal_history, input_history = simulate_control()
 
 
     # ADDITIONAL PLOTTING
@@ -136,6 +138,7 @@ if __name__ == '__main__':
     plt.ylabel('Control Input')
     plt.title('Time series of Control Input u')
     plt.legend()
+    plt.grid()
 
     # Plot time series of error x_d - x
     fig5 = plt.figure(5)
@@ -146,6 +149,8 @@ if __name__ == '__main__':
     plt.ylabel('Error')
     plt.title('Time series of Error x_d - x')
     plt.legend()
+    plt.grid()
+
 
     # Plot state trajectory compared to the desired trajectory
     fig6 = plt.figure(6)
