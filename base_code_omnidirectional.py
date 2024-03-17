@@ -4,7 +4,7 @@ from library.visualize_mobile_robot import sim_mobile_robot
 
 # Constants and Settings
 Ts = 0.01 # Update simulation every 10ms
-t_max = np.pi # total simulation duration in seconds
+t_max = np.pi * 2.5 # total simulation duration in seconds
 # Set initial state
 init_state = np.array([-2., 1., 0.]) # px, py, theta
 IS_SHOWING_2DVISUALIZATION = True
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     plt.plot(t, state_history[:,0], label='px [m]')
     plt.xlabel("t [s]")
     plt.ylabel("vx [m/s], px [m]")
-    plt.title(f"vx, px vs. t for v0, beta = {v0}, {beta}")
+    plt.title(f"vx, px vs. t for v0 = {v0} and beta = {beta}")
     plt.legend()
     plt.grid()
 
