@@ -24,6 +24,12 @@ def compute_control_input(desired_state, robot_state, current_time, v0, beta):
 
     # Compute the control input
     error = desired_state[:2] - robot_state[:2]
+    error_norm = np.linalg.norm(error)
+    if error_norm == 0:
+        return current_input
+    k = v0 * (1 - np.exp(-beta * error_norm)) / error_norm
+
+    error = desired_state[:2] - robot_state[:2]
     current_input[0] = k * error[0]
     current_input[1] = k * error[1]
     current_input[2] = 2. # Constant angular velocity
