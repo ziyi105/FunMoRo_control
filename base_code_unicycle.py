@@ -6,7 +6,7 @@ from library.visualize_mobile_robot import sim_mobile_robot
 Ts = 0.01 # Update simulation every 10ms
 t_max = np.pi # total simulation duration in seconds
 # Set initial state
-init_state = np.array([0., 0., np.pi/2]) # px, py, theta
+init_state = np.array([-1., 0., np.pi/2]) # px, py, theta
 IS_SHOWING_2DVISUALIZATION = True
 
 # Define Field size for plotting (should be in tuple)
@@ -19,13 +19,10 @@ def compute_control_input(desired_state, robot_state, current_time):
     # Feel free to adjust the input and output of the function as needed.
     # And make sure it is reflected inside the loop in simulate_control()
 
-    # initial numpy array for [vlin, omega]
-    current_input = np.array([0., 0.]) 
-    # Compute the control input
-    current_input[0] = 2.
-    current_input[1] = 2.
+    distance_to_goal = np.linalg.norm(desired_state[:2] - robot_state[:2])
+    v = 0 if distance_to_goal < 0.05 else 1
 
-    return current_input
+    return np.array([v, 0]) 
 
 
 # MAIN SIMULATION COMPUTATION
@@ -35,7 +32,7 @@ def simulate_control():
 
     # Initialize robot's state (Single Integrator)
     robot_state = init_state.copy() # numpy array for [px, py, theta]
-    desired_state = np.array([1., 1., 1.]) # numpy array for goal / the desired [px, py, theta]
+    desired_state = np.array([-1., 1., 0.]) # numpy array for goal / the desired [px, py, theta]
 
     # Store the value that needed for plotting: total step number x data length
     state_history = np.zeros( (sim_iter, len(robot_state)) ) 
@@ -108,10 +105,8 @@ if __name__ == '__main__':
     ax = plt.gca()
     ax.plot(t, state_history[:,0], label='px [m]')
     ax.plot(t, state_history[:,1], label='py [m]')
-    ax.plot(t, state_history[:,2], label='theta [rad]')
     ax.plot(t, goal_history[:,0], ':', label='goal px [m]')
     ax.plot(t, goal_history[:,1], ':', label='goal py [m]')
-    ax.plot(t, goal_history[:,2], ':', label='goal theta [rad]')
     ax.set(xlabel="t [s]", ylabel="state")
     plt.legend()
     plt.grid()
