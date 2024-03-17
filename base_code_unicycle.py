@@ -95,7 +95,7 @@ if __name__ == '__main__':
     fig2 = plt.figure(2)
     ax = plt.gca()
     ax.plot(t, input_history[:,0], label='vx [m/s]')
-    ax.plot(t, input_history[:,1], label='omega [rad/s]')
+    ax.plot(t, input_history[:,1], label='vy [m/s]')
     ax.set(xlabel="t [s]", ylabel="control input")
     plt.legend()
     plt.grid()
@@ -110,5 +110,36 @@ if __name__ == '__main__':
     ax.set(xlabel="t [s]", ylabel="state")
     plt.legend()
     plt.grid()
+
+    # Plot time series of control input u
+    fig4 = plt.figure(4)
+    plt.plot(t, state_history[:, 0], label='u_x')
+    plt.plot(t, state_history[:, 1], label='u_y')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Control Input')
+    plt.title('Time series of Control Input u')
+    plt.legend()
+    plt.grid()
+
+    # Plot time series of error x_d - x
+    fig5 = plt.figure(5)
+    plt.plot(t, goal_history[:, 0] - input_history[:, 0], label='error_x')
+    plt.plot(t, goal_history[:, 1] - input_history[:, 1], label='error_y')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Error')
+    plt.title('Time series of Error x_d - x')
+    plt.legend()
+    plt.grid()
+
+
+    # Plot state trajectory compared to the desired trajectory
+    fig6 = plt.figure(6)
+    plt.plot(state_history[:, 0], state_history[:, 1], label='Robot Trajectory')
+    plt.plot(goal_history[:, 0], state_history[:, 1], label='Desired Trajectory')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.title('State Trajectory compared to Desired Trajectory')
+    plt.legend()
+    plt.grid(True)
 
     plt.show()
