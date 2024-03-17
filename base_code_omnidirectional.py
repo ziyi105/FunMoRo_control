@@ -6,7 +6,7 @@ from library.visualize_mobile_robot import sim_mobile_robot
 Ts = 0.01 # Update simulation every 10ms
 t_max = np.pi # total simulation duration in seconds
 # Set initial state
-init_state = np.array([-1, 0., 0.]) # px, py, theta
+init_state = np.array([-2., 1., 0.]) # px, py, theta
 IS_SHOWING_2DVISUALIZATION = True
 
 # Define Field size for plotting (should be in tuple)
@@ -38,7 +38,7 @@ def simulate_control(k):
 
     # Initialize robot's state (Single Integrator)
     robot_state = init_state.copy() # numpy array for [px, py, theta]
-    desired_state = np.array([1., 1., 1.]) # numpy array for goal / the desired [px, py, theta]
+    desired_state = np.array([1., -1., 0.]) # numpy array for goal / the desired [px, py, theta]
 
     # Store the value that needed for plotting: total step number x data length
     state_history = np.zeros( (sim_iter, len(robot_state)) ) 
