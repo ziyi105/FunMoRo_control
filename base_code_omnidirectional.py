@@ -88,7 +88,7 @@ def simulate_control(k):
 if __name__ == '__main__':
     
     # Call main computation for robot simulation
-    k = 3
+    k = 1
     state_history, goal_history, input_history = simulate_control(k)
 
 
@@ -116,6 +116,7 @@ if __name__ == '__main__':
     ax.plot(t, goal_history[:,1], ':', label='goal py [m]')
     ax.plot(t, goal_history[:,2], ':', label='goal theta [rad]')
     ax.set(xlabel="t [s]", ylabel="state")
+    plt.title(f"Robot State and Desired State vs. t for k = {k}")
     plt.legend()
     plt.grid()
 
