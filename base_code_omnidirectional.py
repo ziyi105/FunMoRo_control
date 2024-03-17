@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 from library.visualize_mobile_robot import sim_mobile_robot
 
@@ -6,7 +7,7 @@ from library.visualize_mobile_robot import sim_mobile_robot
 Ts = 0.01 # Update simulation every 10ms
 t_max = np.pi # total simulation duration in seconds
 # Set initial state
-init_state = np.array([-1, 0., 0.]) # px, py, theta
+init_state = np.array([-2, 1., 0]) # px, py, theta
 IS_SHOWING_2DVISUALIZATION = True
 
 # Define Field size for plotting (should be in tuple)
@@ -15,20 +16,25 @@ field_y = (-2, 2)
 
 # IMPLEMENTATION FOR THE CONTROLLER
 #---------------------------------------------------------------------
-def compute_control_input(desired_state, robot_state, current_time, k):
+def compute_control_input(desired_state, robot_state, current_time, k_orientation):
     # Feel free to adjust the input and output of the function as needed.
     # And make sure it is reflected inside the loop in simulate_control()
 
-    # initial numpy array for [vx, vy, omega]
-    current_input = np.array([0., 0., 0.]) 
+    # Calculate linear velocity based on distance to the goal
+    distance_to_goal = np.linalg.norm(sd - x[:2])
+    v = 0 if distance_to_goal < 0.05 else 1
 
-    # Compute the control input
-    error = desired_state[:2] - robot_state[:2]
-    current_input[0] = k * error[0]
-    current_input[1] = k * error[1]
-    current_input[2] = 2. # Constant angular velocity
+    # Calculate angular velocity (proportional control for orientation)
+    desired_orientation = np.arctan2(sd[1] - x[1], sd[0] - x[0])
+    error_orientation = desired_orientation - x[2]
+    # Ensure error is in range [-pi, pi]
+    if error_orientation > np.pi:
+        error_orientation -= 2 * np.pi
+    elif error_orientation < -np.pi:
+        error_orientation += 2 * np.pi
+    omega = k_orientation * error_orientation
 
-    return current_input
+    return np.array([v, omega])
 
 
 # MAIN SIMULATION COMPUTATION
