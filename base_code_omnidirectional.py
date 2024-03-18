@@ -142,9 +142,9 @@ if __name__ == '__main__':
 
     # Plot time series of error x_d - x
     fig5 = plt.figure(5)
-    plt.plot(t, goal_history[:, 0] - input_history[:, 0], label='error_x')
-    plt.plot(t, goal_history[:, 1] - input_history[:, 1], label='error_y')
-    plt.plot(t, goal_history[:, 2] - input_history[:, 2], label='error_theta')
+    plt.plot(t, goal_history[:, 0] - state_history[:, 0], label='error_x')
+    plt.plot(t, goal_history[:, 1] - state_history[:, 1], label='error_y')
+    plt.plot(t, goal_history[:, 2] - state_history[:, 2], label='error_theta')
     plt.xlabel('Time [s]')
     plt.ylabel('Error')
     plt.title('Time series of Error x_d - x')
