@@ -19,11 +19,23 @@ def compute_control_input(desired_state, robot_state, current_time):
     # Feel free to adjust the input and output of the function as needed.
     # And make sure it is reflected inside the loop in simulate_control()
 
-    distance_to_goal = np.linalg.norm(desired_state[:2] - robot_state[:2])
-    v = 0 if distance_to_goal < 0.05 else 1
+    delta_x = desired_state[0] - robot_state[0]
+    delta_y = desired_state[1] - robot_state[1]
+    desired_angle = np.arctan2(delta_y, delta_x)
 
-    return np.array([v, 0]) 
+    error = desired_angle - robot_state[2]
 
+    if error > np.pi:
+        error -= 2 * np.pi
+    elif error < -np.pi:
+        error += 2 * np.pi
+
+    Kp = 1.0 
+    omega = Kp * error
+
+    v = 0 if np.linalg.norm(desired_state[:2] - robot_state[:2]) < 0.05 else 1
+
+    return np.array([v, omega])
 
 # MAIN SIMULATION COMPUTATION
 #---------------------------------------------------------------------
